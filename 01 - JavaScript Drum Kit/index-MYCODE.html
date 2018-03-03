@@ -80,16 +80,17 @@
     let key = document.querySelector(`.key[data-key="${keyCode}"]`);
     let audio = document.querySelector(`audio[data-key="${keyCode}"]`);
 
-    console.log(audio);
-    
-    key.addEventListener('transitionend', function() {
-      removeStyle(key);
-    });
-
     setStyle(key);
     playSound(audio);
 
   };
+
+  document.querySelectorAll('.key').forEach(key => {
+    console.log(key);
+    key.addEventListener('transitionend', function() {
+      removeStyle(key);
+    });
+  });
 
 </script>
 
