@@ -20,41 +20,34 @@
 const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
 
 let allPlaces;
+let search = document.querySelector('.search');
+let suggestions = document.querySelector('.suggestions');
 
-function update() {
+function update(matches) {
+  suggestions.innerHTML = matches.map(match => {
+    return `<li>
+              <span>${match.city}, ${match.state}</span>
+            </li>`;
+  }).join('');
 
 }
 
 function match() {
-  let cityMatches;
-  let stateMatches;
+  let matches;
   let regexp = new RegExp(this.value, 'gi');
 
-  cityMatches = allPlaces.filter(place => {
-    return place.city.match(regexp);
+  matches = allPlaces.filter(place => {
+    return place.city.match(regexp) || place.state.match(regexp);
   });
 
-  stateMatches = allPlaces.filter(place => {
-    return place.state.match(regexp);
-  });
-
-  console.log(cityMatches);
+  update(matches);
 }
-
-function main() {
-  let search = document.querySelector('.search');
-  let suggestions = document.querySelector('.suggestions');
-
-  search.addEventListener('input', match);
-
-}
-
 
 fetch(endpoint)
   .then(data => data.json())
   .then(data => {
     allPlaces = data;
-    main(allPlaces);
+    search.addEventListener('input', match);
   });
 
 </script>
