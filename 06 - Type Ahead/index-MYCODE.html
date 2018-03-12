@@ -22,25 +22,34 @@ const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb
 let allPlaces;
 let search = document.querySelector('.search');
 let suggestions = document.querySelector('.suggestions');
+let originalHTML = suggestions.innerHTML;
 
-function update(matches) {
-  suggestions.innerHTML = matches.map(match => {
-    return `<li>
-              <span>${match.city}, ${match.state}</span>
-            </li>`;
-  }).join('');
+function update(matches, regexp) {
+  if (regexp.source !== '(?:)') {
+    suggestions.innerHTML = matches.map(match => {
+      
+      let city = match.city.replace(regexp, `<mark>$&</mark>`);
+      let state = match.state.replace(regexp, `<mark>$&</mark>`);
+      
+      return `<li>
+                <span>${city}, ${state}</span>
+              </li>`;
+        }).join('');
+  }
 
+  else {
+    suggestions.innerHTML = originalHTML;
+  }
 }
 
 function match() {
-  let matches;
   let regexp = new RegExp(this.value, 'gi');
 
-  matches = allPlaces.filter(place => {
+  let matches = allPlaces.filter(place => {
     return place.city.match(regexp) || place.state.match(regexp);
   });
 
-  update(matches);
+  update(matches, regexp);
 }
 
 fetch(endpoint)
